@@ -22,8 +22,8 @@ import static java.lang.System.in;
 
 public class MainActivity extends AppCompatActivity {
 
-    //private static String LOCAL_HOST = "10.0.2.2"; //not 127.0.0.1!
-    private static String LOCAL_HOST = "opuntia.cs.utep.edu";
+    private static String LOCAL_HOST ="192.168.1.71";//put your ip address
+    //private static String LOCAL_HOST = "opuntia.cs.utep.edu";
     private static String CHAT_SERVER = LOCAL_HOST;
     private static final int PORT_NUMBER = 8000;
 
@@ -45,8 +45,8 @@ public class MainActivity extends AppCompatActivity {
         setContentView(R.layout.activity_main);
         handler = new Handler();
 
-        Button button = (Button) findViewById(R.id.connectButton);
-        button.setOnClickListener(view -> connectToServer(CHAT_SERVER, PORT_NUMBER));
+        Button button1 = (Button) findViewById(R.id.connectButton);
+        button1.setOnClickListener(view -> connectToServer(CHAT_SERVER, PORT_NUMBER));
 
         msgView = (ListView) findViewById(R.id.msgView);
         msgList = new ArrayAdapter<String>(this, R.layout.msg_text);
@@ -54,8 +54,8 @@ public class MainActivity extends AppCompatActivity {
         msgView.setAdapter(msgList);
 
         msgEdit = (EditText) findViewById(R.id.msgEdit);
-        button = (Button) findViewById(R.id.sendButton);
-        button.setOnClickListener(view -> sendMessage(msgEdit.getText().toString()));
+        Button button2 = (Button) findViewById(R.id.sendButton);
+        button2.setOnClickListener(view -> sendMessage(msgEdit.getText().toString()));
     }
 
     /** Connect to the specified chat server. */
@@ -63,13 +63,18 @@ public class MainActivity extends AppCompatActivity {
         new Thread(() -> {
             socket = createSocket(host, port);
             if (socket != null) {
-                // WRITE YOUR CODE HERE ...
-                if(msgEdit.getText().toString()!= null) {
-                    sendMessage(msgEdit.getText().toString());
+                try {
+                    readMessage();
+                } catch (IOException e) {
+                    e.printStackTrace();
                 }
+                // WRITE YOUR CODE HERE ...
+                //if(msgEdit.getText().toString()!= null) {
+                //    sendMessage(msgEdit.getText().toString());
+                //}
             }
 
-            handler.post(() -> showToast(socket != null ? "Connected." : "Failed to connect!"));
+            handler.post(() -> showToast(socket != null ? "Connected." : "Failed to connect!11"));
         }).start();
     }
 
@@ -113,7 +118,7 @@ public class MainActivity extends AppCompatActivity {
             if(msg == null){
                 break;
             }
-            else handler.post(()->msgList.add(msg));
+            else handler.post(()->displayMessage(msg));
         }
     }
 
